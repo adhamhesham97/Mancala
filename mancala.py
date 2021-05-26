@@ -127,6 +127,27 @@ def nextPlay(board, player, stealing=True):
 def score(board, player): 
     return
 def winner(board): 
-    return
+    result = 0
+    player1=board[6]
+    player2=board[13]
+
+    if(board[0]==board[1]==board[2]==board[3]==board[4]==board[5]==0 ):
+
+        player2+=board[7]+board[8]+board[9]+board[10]+board[11]+board[12]
+
+    elif(board[7]==board[8]==board[9]==board[10]==board[11]== board[12]==0 ):
+    
+        player1+=board[0]+board[1]+board[2]+board[3]+board[4]+board[5]
+        
+    else:
+        return 0
+    if(player1>player2):
+        result=1
+    elif(player2>player1):
+        result =2
+    else: 
+        result =0
+    return result
+
 def endgame(board): 
     return
