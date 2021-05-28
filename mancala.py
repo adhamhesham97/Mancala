@@ -1,5 +1,7 @@
+initialBoard = [4,4,4,4,4,4, 0,    4,4,4,4,4,4, 0]
 def move(board, pocket, stealing=True):
-   
+    
+    board=board.copy()
     # determine which player is playing
     
     if(pocket<6):
@@ -51,6 +53,45 @@ def move(board, pocket, stealing=True):
     
     return board, nextPlayer
 
+'''
+board=[1,0,0,0,0,0, 0,    0,0,0,0,0,0, 0]
+board, nextPlayer = move(board, pocket=0, stealing=False)
+print(board)
+print ('next player is', nextPlayer)
+
+board=[0,0,0,0,0,0, 0,    0,0,0,0,0,3, 0]
+board, nextPlayer = move(board, pocket=12, stealing=False)
+print(board)
+print ('next player is', nextPlayer)
+
+board=[0,0,0,0,0,9, 0,    0,0,0,0,0,0, 0]
+board, nextPlayer = move(board, pocket=5, stealing=False)
+print(board)
+print ('next player is', nextPlayer)
+
+# hard
+
+board=[0,0,0,0,10,0, 0,    0,0,0,0,0,0, 0]
+board, nextPlayer = move(board, pocket=4)
+print(board)
+print ('next player is', nextPlayer)
+
+board=[0,1,0,0,10,0, 0,    0,0,0,0,0,0, 0]
+board, nextPlayer = move(board, pocket=4)
+print(board)
+print ('next player is', nextPlayer)
+
+board=[0,0,0,0,10,0, 0,    0,0,0,0,0,0, 0]
+board, nextPlayer = move(board, pocket=4, stealing=False)
+print(board)
+print ('next player is', nextPlayer)
+
+board=[0, 0, 0, 0, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+board, nextPlayer = move(board, pocket=7, stealing=True)
+print(board)
+print ('next player is', nextPlayer)
+'''
+
 def isValidMove(board, pocket):
     return board[pocket] != 0
      
@@ -58,19 +99,19 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
 	
     #check if there are no moves possible
     
-    winningPlayer = winner(board)
+    winningPlayer, board = findWinner(board)
+    
     if (winningPlayer != 0):
-        board = endgame(board)
-        return score(board, player)
+        return score(board, player), -1
     
     if(depth == 0):
-        return score(board, player)
+        return score(board, player), -1
     
     if(player == 1):
         playerPockets = range(6)
     
     if(player == 2):
-        playerPockets = range(6)+7
+        playerPockets = range(7, 13)
     
     if (maximizingPlayer):
         maxScore = float('-inf')
@@ -79,10 +120,10 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
                 childBoard, nextPlayer = move(board, pocket, stealing)
                 
                 if(nextPlayer == player): # if player gets another move then next turn is maximizer player's trun
-                    childScore, _ = minimax(childBoard, nextPlayer, stealing, depth, alpha, beta, True)
+                    childScore, _ = minimax(childBoard, nextPlayer, stealing, depth-1, alpha, beta, True)
                 
                 else: # else The next trun is minimizer player's trun
-                    childScore, _ = minimax(childBoard, nextPlayer, stealing, depth, alpha, beta, False)
+                    childScore, _ = minimax(childBoard, nextPlayer, stealing, depth-1, alpha, beta, False)
                 
                 if(childScore > maxScore):
                     nextMove = pocket
@@ -103,10 +144,10 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
                 childBoard, nextPlayer = move(board, pocket)
                 
                 if(nextPlayer == player): # if player gets anothrt move then next node is minimizer also
-                    childScore, _ = minimax(childBoard, nextPlayer, stealing, depth, alpha, beta, False)
+                    childScore, _ = minimax(childBoard, nextPlayer, stealing, depth-1, alpha, beta, False)
                 
                 else: # else The next trun is minimizer player's trun
-                    childScore, _ = minimax(childBoard, nextPlayer, stealing, depth, alpha, beta, True)
+                    childScore, _ = minimax(childBoard, nextPlayer, stealing, depth-1, alpha, beta, True)
             
                 if(childScore < minScore):
                     nextMove = pocket
@@ -117,15 +158,46 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
                     
                 if (beta <= alpha):
                     break
-                return minScore, nextMove
+        return minScore, nextMove
         
+def bestPocket(board, player, stealing=True):
+    maxScore, nextMove = minimax(board, player, stealing, 8, float('-inf'), float('inf'), True)
+    return nextMove#, maxScore
 
-def nextPlay(board, player, stealing=True):
-    minimax(board, player, stealing, 3, float('-inf'), float('inf'), True)
+'''
+board=[1,0,0,0,2,1, 0,    1,0,0,0,0,0, 0]
+print(bestPocket(board, 1))
+
+board=[1,0,0,3,1,0, 0,    1,0,0,0,0,0, 0]
+print(bestPocket(board, 1))
+
+board=[1,0,0,3,0,1, 0,    1,0,0,0,0,0, 0]
+print(bestPocket(board, 1))
+
+
+
+board=[0,0,0,0,2,1, 0,    1,0,0,0,0,0, 0]
+print(bestPocket(board, 1))
+
+board=[0,0,0,3,1,0, 0,    1,0,0,0,0,0, 0]
+print(bestPocket(board, 1))
+
+
+
+board=[1,0,0,3,0,1, 0,    1,0,0,0,0,0, 0]
+print(bestPocket(board, 1))
+board, nextPlayer = move(board, pocket=0)
+board, nextPlayer = move(board, pocket=7)
+print(board)
+board=[0, 0, 0, 3, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1]
+print(bestPocket(board, 1))
+'''
     
-### to be implemented
 def score(board, player): 
-    return
+    if(player==1):
+        return board[6]-board[13]
+    else:
+        return board[13]-board[6]
     
 def findWinner(board):
     result = 0
@@ -149,13 +221,40 @@ def findWinner(board):
         board[5]=0
     else:
         return result,board
+    
     if(board[6]>board[13]):
         result=1
     elif(board[13]>board[6]):
         result =2
-    else: 
+    elif(board[13]==board[6]): 
+        result =3
+    else:
         result =0
     
     
     
-    return result,board
+    return result, board
+
+def play():
+    board = initialBoard
+    display(board)
+    nextPlayer=1
+    while(True):
+        pocket = bestPocket(board, nextPlayer)
+        board, nextPlayer = move(board, pocket)
+        winner, board = findWinner(board)
+        display(board)
+        if(winner==1):
+            print('player 1 wins')
+            break
+        elif(winner==2):
+            print('player 2 wins')
+            break
+        elif(winner==3):
+            print('a tie')
+            break
+
+def display(board):
+    return
+
+play()
