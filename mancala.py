@@ -1,4 +1,5 @@
 initialBoard = [4,4,4,4,4,4, 0,    4,4,4,4,4,4, 0]
+depth=8
 def move(board, pocket, stealing=True):
     
     board=board.copy()
@@ -25,6 +26,7 @@ def move(board, pocket, stealing=True):
         if skip:
             board[(currentPocket+1) % 14] = board[(currentPocket+1) % 14] + 1
             skipped = skipped + 1
+            currentPocket = (currentPocket + 1) % 14
         else:
             board[currentPocket] = board[currentPocket] + 1
     
@@ -90,6 +92,12 @@ board=[0, 0, 0, 0, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0]
 board, nextPlayer = move(board, pocket=7, stealing=True)
 print(board)
 print ('next player is', nextPlayer)
+
+board = [0, 9, 1, 8, 6, 8, 8, 6, 3, 6, 2, 2, 4, 1]
+board, nextPlayer = move(board, pocket=5, stealing=True)
+print(board)
+print ('next player is', nextPlayer)
+
 '''
 
 def isValidMove(board, pocket):
@@ -161,7 +169,7 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
         return minScore, nextMove
         
 def bestPocket(board, player, stealing=True):
-    maxScore, nextMove = minimax(board, player, stealing, 8, float('-inf'), float('inf'), True)
+    maxScore, nextMove = minimax(board, player, stealing, depth, float('-inf'), float('inf'), True)
     return nextMove#, maxScore
 
 '''
@@ -237,13 +245,14 @@ def findWinner(board):
 
 def play():
     board = initialBoard
-    display(board)
-    nextPlayer=1
+    display(board,0)
+    player=1
     while(True):
-        pocket = bestPocket(board, nextPlayer)
-        board, nextPlayer = move(board, pocket)
+        pocket = bestPocket(board, player)
+        print('player',player,'plays pocket', pocket+1)
+        board, player = move(board, pocket)
         winner, board = findWinner(board)
-        display(board)
+        display(board, 0)
         if(winner==1):
             print('player 1 wins')
             break
@@ -254,7 +263,7 @@ def play():
             print('a tie')
             break
 
-def display(board):
+def display(board, x):
     return
 
 play()
