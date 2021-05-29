@@ -266,4 +266,46 @@ def play():
 def display(board, x):
     return
 
+def getInput(board, player):
+    # TODO: checks for invalid input and returns a pocket to play from
+    return #pocket
+
 play()
+
+board = initialBoard
+display(board,0)
+userPlayer = int(input('player 1 or player 2? '))
+
+if(userPlayer == 1):
+    computerPlayer = 2
+else:
+     computerPlayer = 1
+
+player = 1
+while(True):
+    if(player == userPlayer):
+        pocket = getInput(board, player)
+        board, player = move(board, pocket)
+    else:
+        pocket = bestPocket(board, player)
+        board, player = move(board, pocket)
+        print('computer played pocket', pocket+1)
+        if(player != userPlayer):
+            display(board, 0)
+        
+    winner, board = findWinner(board)
+    if(winner != 0): #display final board
+        display(board, 0)
+    
+    if(winner == userPlayer):
+        print('you win')
+        break
+    elif(winner == computerPlayer):
+        print('computer wins')
+        break
+    elif(winner == 3):
+        print('a tie')
+        break
+
+
+
