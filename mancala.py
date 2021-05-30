@@ -102,8 +102,50 @@ print ('next player is', nextPlayer)
 '''
 
 def isValidMove(board, pocket):
-    return board[pocket] != 0
-     
+    return board[pocket] != 0  
+
+def score(board, player): 
+    if(player==1):
+        return board[6]-board[13]
+    else:
+        return board[13]-board[6]
+    
+def findWinner(board):
+    result = 0
+    if(board[0]==board[1]==board[2]==board[3]==board[4]==board[5]==0 ):
+
+        board[13]+=board[7]+board[8]+board[9]+board[10]+board[11]+board[12]
+        board[7]=0
+        board[8]=0
+        board[9]=0
+        board[10]=0
+        board[11]=0
+        board[12]=0
+    elif(board[7]==board[8]==board[9]==board[10]==board[11]== board[12]==0 ):
+    
+        board[6]+=board[0]+board[1]+board[2]+board[3]+board[4]+board[5]
+        board[0]=0
+        board[1]=0
+        board[2]=0
+        board[3]=0
+        board[4]=0
+        board[5]=0
+    else:
+        return result,board
+    
+    if(board[6]>board[13]):
+        result=1
+    elif(board[13]>board[6]):
+        result =2
+    elif(board[13]==board[6]): 
+        result =3
+    else:
+        result =0
+    
+    
+    
+    return result, board
+
 def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
 	
     #check if time limit is reached
@@ -119,7 +161,13 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
     winningPlayer, board = findWinner(board)
     
     if (winningPlayer != 0):
-        return score(board, player), -1
+        if(maximizingPlayer):
+            return score(board, player), -1
+        else:
+            if(player==1):
+                return score(board, 2), -1
+            else:
+                return score(board, 1), -1
     
     if(depth == 0):
         return score(board, player), -1
@@ -182,11 +230,11 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
 start_limit_list = [0,-1]
 
 def bestPocket(board, player, stealing=True, depth=10):
-    print("loading...\nPress Ctrl-C to terminate (time limit is", start_limit_list[1], "seconds)",end='\r')
+    # print("loading...\nPress Ctrl-C to terminate (time limit is", start_limit_list[1], "seconds)",end='\r')
     start_limit_list[0] = time.time()
     maxScore = float('-inf')
     try:
-        for depth in range(15):
+        for depth in range(1,15):
             Score, Move = minimax(board, player, stealing, depth, float('-inf'), float('inf'), True)
             if (Score > maxScore):
                 nextMove = Move
@@ -197,6 +245,7 @@ def bestPocket(board, player, stealing=True, depth=10):
         print("\nCtrl-C is pressed",end='\r')
         
     return nextMove#, maxScore
+
 
 '''
 board=[1,0,0,0,2,1, 0,    1,0,0,0,0,0, 0]
@@ -237,48 +286,6 @@ for depth in range(14):
     print( "it took", (time.time() - start_time), "seconds\n\n")
 
 '''
-
-def score(board, player): 
-    if(player==1):
-        return board[6]-board[13]
-    else:
-        return board[13]-board[6]
-    
-def findWinner(board):
-    result = 0
-    if(board[0]==board[1]==board[2]==board[3]==board[4]==board[5]==0 ):
-
-        board[13]+=board[7]+board[8]+board[9]+board[10]+board[11]+board[12]
-        board[7]=0
-        board[8]=0
-        board[9]=0
-        board[10]=0
-        board[11]=0
-        board[12]=0
-    elif(board[7]==board[8]==board[9]==board[10]==board[11]== board[12]==0 ):
-    
-        board[6]+=board[0]+board[1]+board[2]+board[3]+board[4]+board[5]
-        board[0]=0
-        board[1]=0
-        board[2]=0
-        board[3]=0
-        board[4]=0
-        board[5]=0
-    else:
-        return result,board
-    
-    if(board[6]>board[13]):
-        result=1
-    elif(board[13]>board[6]):
-        result =2
-    elif(board[13]==board[6]): 
-        result =3
-    else:
-        result =0
-    
-    
-    
-    return result, board
 
 def display(board,x):
     W  = '\033[0m'
