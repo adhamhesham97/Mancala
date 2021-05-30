@@ -1,6 +1,7 @@
 initialBoard = [4,4,4,4,4,4, 0,    4,4,4,4,4,4, 0]
-depth=8
-W  = '\033[0m'
+pocketNames = ['f','e','d','c','b','a', 0,    'a','b','c','d','e','f', 0]      
+depth=10
+
 def move(board, pocket, stealing=True):
     
     board=board.copy()
@@ -244,57 +245,61 @@ def findWinner(board):
     
     return result, board
 
-def play():
+def play(stealing):
     board = initialBoard
     display(board,0)
     player=1
     while(True):
-        pocket = bestPocket(board, player)
-        print(W+'player',player,'plays pocket', pocket+1)
-        board, player = move(board, pocket)
+        pocket = bestPocket(board, player, stealing)
+        print('\nplayer',player,'plays pocket', pocketNames[pocket])
+        board, player = move(board, pocket, stealing)
         winner, board = findWinner(board)
         display(board, 0)
         if(winner==1):
-            print(W+'player 1 wins')
+            print('player 1 wins')
             break
         elif(winner==2):
-            print(W+'player 2 wins')
+            print('player 2 wins')
             break
         elif(winner==3):
-            print(W+'a tie')
+            print('a tie')
             break
 
 def display(board,x):
+    W  = '\033[0m'
     R  = '\033[31m' # red
     G  = '\033[32m' # green
     P  = '\033[35m' # purple
+    print('')
     if(x==0):
-        print(P+"\t\t\t\t\t"+" Player1".expandtabs(30))
-        print(P+"\t\t\t"+str(board[5])+'\t'+str(board[4])+'\t'+str(board[3])+'\t'+str(board[2])+'\t'+str(board[1])+'\t'+str(board[0]).expandtabs(30))
-        print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+'\t'+str(board[13]).expandtabs(30))
-        print(R+"\n\t\t\t"+str(board[7])+'\t'+str(board[8])+'\t'+str(board[9])+'\t'+str(board[10])+'\t'+str(board[11])+'\t'+str(board[12]).expandtabs(30))
-        print(R+"\t\t\t\t\t"+" Player2".expandtabs(30))
-    elif(x==1):
-        print(P+"\t\t\t\t\t"+" Player".expandtabs(30))
-        #print("\t\t\t")
+        print(P+"\t\t\t\t"+"   Player1".expandtabs(30))
         print(G+"\t\t\t"+'a'+'\t'+'b'+'\t'+'c'+'\t'+'d'+'\t'+'e'+'\t'+'f'.expandtabs(30))
         print(P+"\t\t\t"+str(board[5])+'\t'+str(board[4])+'\t'+str(board[3])+'\t'+str(board[2])+'\t'+str(board[1])+'\t'+str(board[0]).expandtabs(30))
         print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+'\t'+str(board[13]).expandtabs(30))
         print(R+"\n\t\t\t"+str(board[7])+'\t'+str(board[8])+'\t'+str(board[9])+'\t'+str(board[10])+'\t'+str(board[11])+'\t'+str(board[12]).expandtabs(30))
-        print(R+"\t\t\t\t\t"+" Computer".expandtabs(30))  
+        print(G+"\t\t\t"+'a'+'\t'+'b'+'\t'+'c'+'\t'+'d'+'\t'+'e'+'\t'+'f'.expandtabs(30))
+        print(R+"\t\t\t\t"+"   Player2".expandtabs(30)+W)
+    elif(x==1):
+        print(P+"\t\t\t\t"+"    Player".expandtabs(30))
+        print(G+"\t\t\t"+'a'+'\t'+'b'+'\t'+'c'+'\t'+'d'+'\t'+'e'+'\t'+'f'.expandtabs(30))
+        print(P+"\t\t\t"+str(board[5])+'\t'+str(board[4])+'\t'+str(board[3])+'\t'+str(board[2])+'\t'+str(board[1])+'\t'+str(board[0]).expandtabs(30))
+        print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+'\t'+str(board[13]).expandtabs(30))
+        print(R+"\n\t\t\t"+str(board[7])+'\t'+str(board[8])+'\t'+str(board[9])+'\t'+str(board[10])+'\t'+str(board[11])+'\t'+str(board[12]).expandtabs(30))
+        print(G+"\t\t\t"+'a'+'\t'+'b'+'\t'+'c'+'\t'+'d'+'\t'+'e'+'\t'+'f'.expandtabs(30))
+        print(R+"\t\t\t\t"+"   Computer".expandtabs(30)+W)  
     elif(x==2):
-        print(P+"\t\t\t\t\t"+" Computer".expandtabs(30)) 
+        print(P+"\t\t\t\t"+"   Computer".expandtabs(30)) 
+        print(G+"\t\t\t"+'a'+'\t'+'b'+'\t'+'c'+'\t'+'d'+'\t'+'e'+'\t'+'f'.expandtabs(30))
         print(P+"\t\t\t"+str(board[5])+'\t'+str(board[4])+'\t'+str(board[3])+'\t'+str(board[2])+'\t'+str(board[1])+'\t'+str(board[0]).expandtabs(30))
         print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+'\t'+str(board[13]))
         print(R+"\n\t\t\t"+str(board[7])+'\t'+str(board[8])+'\t'+str(board[9])+'\t'+str(board[10])+'\t'+str(board[11])+'\t'+str(board[12]).expandtabs(30))
         print(G+"\t\t\t"+'a'+'\t'+'b'+'\t'+'c'+'\t'+'d'+'\t'+'e'+'\t'+'f'.expandtabs(30))
-        print(R+"\t\t\t\t\t"+" Player".expandtabs(30))
+        print(R+"\t\t\t\t"+"    Player".expandtabs(30)+W)
     return
 
-def getInput(board,player):     # TODO: checks for invalid input and returns a pocket to play from
-    W  = '\033[0m'
+def getInput(board,player):
     display(board,player)
-    user_ip=input(W+"\n\n"+"Choose the location of the pocket to play: 'a, b, c, d, e, f': " )
+    user_ip=input("Choose the location of the pocket to play: ")#'a, b, c, d, e, f': " )
     index=9999
     while(1):   
         if(player==1):
@@ -324,53 +329,92 @@ def getInput(board,player):     # TODO: checks for invalid input and returns a p
             elif (user_ip=='f'):
                 index=12
         if(user_ip!='a' and user_ip!='b' and user_ip!='c' and user_ip!='d' and user_ip!='e' and user_ip!='f' ):
-            user_ip=input(W+"Enter the right pocket: ")
+            user_ip=input("Enter the right pocket: ")
             continue
         elif(board[index]==0 ):
-            user_ip=input(W+"Enter the right pocket: ")
+            user_ip=input("Enter the right pocket: ")
             
         else:
             return index        #pocket
+        # print(W)
     return
-# play()
 
-board = initialBoard
-display(board,0)
-userPlayer = int(input(W+'player 1 or player 2? '))
+def inputStealing():
+    stealing=None
+    while (stealing==None):
+        x = input('game mode: stealing y/n? ')
+        if(x == 'y'):
+            stealing=True
+        elif(x == 'n'):
+            stealing=False
+        else:
+            print("invalid input")
+    return stealing
 
-if(userPlayer == 1):
-    computerPlayer = 2
-else:
-     computerPlayer = 1
-
-player = 1
-while(True):
-    if(player == userPlayer):
-        pocket = getInput(board, player)
-        board, player = move(board, pocket)
-        #display(board, userPlayer)
-        if(player != userPlayer):
-            display(board, userPlayer)
+def inputPlaying():
+    Playing=None
+    while (Playing==None):
+        x = input('do you want to play the computer y/n? ')
+        if(x == 'y'):
+            Playing=True
+        elif(x == 'n'):
+            Playing=False
+        else:
+            print("invalid input")
+    return Playing
+    
+def inputPlayerNumber():
+    userPlayer=None
+    while (userPlayer==None):
+        x = input('player 1 or player 2? ')
+        if(x == '1'):
+            userPlayer = 1
+        elif(x == '2'):
+            userPlayer = 2
+        else:
+            print("invalid input")
+    if(userPlayer == 1):
+        computerPlayer = 2
     else:
-        pocket = bestPocket(board, player)
-        board, player = move(board, pocket)
-        print(W+'computer played pocket', pocket+1)
-        if(player != userPlayer):
+         computerPlayer = 1
+    return userPlayer, computerPlayer
+
+playing = inputPlaying()
+
+if(playing):
+    stealing = inputStealing()
+    board = initialBoard
+    display(board,0)
+    userPlayer, computerPlayer = inputPlayerNumber()
+    player = 1
+    
+    while(True):
+        if(player == userPlayer):
+            pocket = getInput(board, player)
+            board, player = move(board, pocket, stealing)
+            if(player != userPlayer):
+                display(board, userPlayer)
+        else:
+            pocket = bestPocket(board, player, stealing)
+            board, player = move(board, pocket, stealing)
+            print('\ncomputer played pocket', pocketNames[pocket])
+            if(player != userPlayer):
+                display(board, userPlayer)
+            
+        winner, board = findWinner(board)
+        if(winner != 0): #display final board
             display(board, userPlayer)
         
-    winner, board = findWinner(board)
-    if(winner != 0): #display final board
-        display(board, 0)
-    
-    if(winner == userPlayer):
-        print(W+'you win')
-        break
-    elif(winner == computerPlayer):
-        print(W+'computer wins')
-        break
-    elif(winner == 3):
-        print(W+'a tie')
-        break
+        if(winner == userPlayer):
+            print('you win')
+            break
+        elif(winner == computerPlayer):
+            print('computer wins')
+            break
+        elif(winner == 3):
+            print('a tie')
+            break
 
-
-
+else:
+    stealing = inputStealing()
+    play(stealing)
