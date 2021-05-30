@@ -264,6 +264,13 @@ def play():
             break
 
 def display(board, x):
+	W  = '\033[0m'  # white (normal)
+	R  = '\033[31m' # red
+	G  = '\033[32m' # green
+	O  = '\033[33m' # orange
+	B  = '\033[34m' # blue
+	P  = '\033[35m' # purple
+	C  = '\033[36m' # purple
 	if(x==0):
         print(P+"\t\t\t\t Player 1")
         print(P+"\n\t\t\t"+str(board[5])+"  "+str(board[4])+"  "+str(board[3])+"   "+str(board[2])+"   "+str(board[1])+"   "+str(board[0]))
