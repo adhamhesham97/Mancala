@@ -1,5 +1,6 @@
 initialBoard = [4,4,4,4,4,4, 0,    4,4,4,4,4,4, 0]
 depth=8
+W  = '\033[0m'
 def move(board, pocket, stealing=True):
     
     board=board.copy()
@@ -249,18 +250,18 @@ def play():
     player=1
     while(True):
         pocket = bestPocket(board, player)
-        print('player',player,'plays pocket', pocket+1)
+        print(W+'player',player,'plays pocket', pocket+1)
         board, player = move(board, pocket)
         winner, board = findWinner(board)
         display(board, 0)
         if(winner==1):
-            print('player 1 wins')
+            print(W+'player 1 wins')
             break
         elif(winner==2):
-            print('player 2 wins')
+            print(W+'player 2 wins')
             break
         elif(winner==3):
-            print('a tie')
+            print(W+'a tie')
             break
 
 def display(board,x):
@@ -322,9 +323,11 @@ def getInput(board,player):     # TODO: checks for invalid input and returns a p
                 index=11
             elif (user_ip=='f'):
                 index=12
-        if(board[index]==0 or (user_ip!='a' and user_ip!='b' and user_ip!='c' and user_ip!='d' and user_ip!='e' and user_ip!='f' )):
+        if(user_ip!='a' and user_ip!='b' and user_ip!='c' and user_ip!='d' and user_ip!='e' and user_ip!='f' ):
             user_ip=input(W+"Enter the right pocket: ")
             continue
+        elif(board[index]==0 ):
+            user_ip=input(W+"Enter the right pocket: ")
             
         else:
             return index        #pocket
@@ -333,7 +336,7 @@ def getInput(board,player):     # TODO: checks for invalid input and returns a p
 
 board = initialBoard
 display(board,0)
-userPlayer = int(input('player 1 or player 2? '))
+userPlayer = int(input(W+'player 1 or player 2? '))
 
 if(userPlayer == 1):
     computerPlayer = 2
@@ -351,7 +354,7 @@ while(True):
     else:
         pocket = bestPocket(board, player)
         board, player = move(board, pocket)
-        print('computer played pocket', pocket+1)
+        print(W+'computer played pocket', pocket+1)
         if(player != userPlayer):
             display(board, userPlayer)
         
@@ -360,13 +363,13 @@ while(True):
         display(board, 0)
     
     if(winner == userPlayer):
-        print('you win')
+        print(W+'you win')
         break
     elif(winner == computerPlayer):
-        print('computer wins')
+        print(W+'computer wins')
         break
     elif(winner == 3):
-        print('a tie')
+        print(W+'a tie')
         break
 
 
