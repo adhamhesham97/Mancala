@@ -263,15 +263,11 @@ def play():
             print('a tie')
             break
 
-def display(board, x):
-	W  = '\033[0m'  # white (normal)
-	R  = '\033[31m' # red
-	G  = '\033[32m' # green
-	O  = '\033[33m' # orange
-	B  = '\033[34m' # blue
-	P  = '\033[35m' # purple
-	C  = '\033[36m' # purple
-	if(x==0):
+def display(board,x):
+    R  = '\033[31m' # red
+    G  = '\033[32m' # green
+    P  = '\033[35m' # purple
+    if(x==0):
         print(P+"\t\t\t\t Player 1")
         print(P+"\n\t\t\t"+str(board[5])+"  "+str(board[4])+"  "+str(board[3])+"   "+str(board[2])+"   "+str(board[1])+"   "+str(board[0]))
         print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+str(board[13]))
@@ -284,21 +280,50 @@ def display(board, x):
         print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+str(board[13]))
         print(R+"\n\t\t\t"+str(board[7])+"  "+str(board[8])+"  "+str(board[9])+"  "+str(board[10])+"  "+str(board[11])+"  "+str(board[12]))
         print(R+"\n\t\t\t\t Computer")  
-        print(W+"\n\n"+"Choose the location of the pocket to play: 'a, b, c, d, e, f': " )
     elif(x==2):
         print(P+"\t\t\t\t Computer")
         print(P+"\t\t\t"+str(board[5])+"  "+str(board[4])+"  "+str(board[3])+"   "+str(board[2])+"   "+str(board[1])+"   "+str(board[0]))
         print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+str(board[13]))
         print(R+"\n\t\t\t"+str(board[7])+"  "+str(board[8])+"  "+str(board[9])+"  "+str(board[10])+"  "+str(board[11])+"  "+str(board[12]))
         print(G+"\t\t\t"+'a'+"  "+'b'+"  "+'c'+"   "+'d'+"   "+'e'+"   "+'f')
-        print(R+"\t\t\t\t Player")  
-        print(W+"\n\n"+"Choose the location of the pocket to play: 'a, b, c, d, e, f': " )
+        print(R+"\t\t\t\t Player")
     return
-
-def getInput(board, player):
-    # TODO: checks for invalid input and returns a pocket to play from
-    return #pocket
-
+def getInput(board,player):     # TODO: checks for invalid input and returns a pocket to play from
+    W  = '\033[0m'
+    display(board,player)
+    user_ip=input(W+"\n\n"+"Choose the location of the pocket to play: 'a, b, c, d, e, f': " )
+    index=9999
+    if(player==1):
+        if(user_ip=='a'):
+            index=5
+        elif (user_ip=='b'):
+            index=4
+        elif (user_ip=='c'):
+            index=3
+        elif (user_ip=='d'):
+            index=2
+        elif (user_ip=='e'):
+            index=1
+        elif (user_ip=='f'):
+            index=0
+    elif(player==2):
+        if(user_ip=='a'):
+            index=7
+        elif (user_ip=='b'):
+            index=8
+        elif (user_ip=='c'):
+            index=9
+        elif (user_ip=='d'):
+            index=10
+        elif (user_ip=='e'):
+            index=11
+        elif (user_ip=='f'):
+            index=12
+    if(board[index]==0):
+        print("Empty Pocket")
+    else:
+        return index        #pocket
+    return
 play()
 
 board = initialBoard
