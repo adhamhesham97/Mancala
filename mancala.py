@@ -264,6 +264,28 @@ def play():
             break
 
 def display(board, x):
+	if(x==0):
+        print(P+"\t\t\t\t Player 1")
+        print(P+"\n\t\t\t"+str(board[5])+"  "+str(board[4])+"  "+str(board[3])+"   "+str(board[2])+"   "+str(board[1])+"   "+str(board[0]))
+        print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+str(board[13]))
+        print(R+"\n\t\t\t"+str(board[7])+"  "+str(board[8])+"  "+str(board[9])+"  "+str(board[10])+"  "+str(board[11])+"  "+str(board[12]))
+        print(R+"\n\t\t\t\t Player 2")
+    elif(x==1):
+        print(P+"\t\t\t\t Player")
+        print(G+"\t\t\t"+'a'+"  "+'b'+"  "+'c'+"   "+'d'+"   "+'e'+"   "+'f')
+        print(P+"\t\t\t"+str(board[5])+"  "+str(board[4])+"  "+str(board[3])+"   "+str(board[2])+"   "+str(board[1])+"   "+str(board[0]))
+        print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+str(board[13]))
+        print(R+"\n\t\t\t"+str(board[7])+"  "+str(board[8])+"  "+str(board[9])+"  "+str(board[10])+"  "+str(board[11])+"  "+str(board[12]))
+        print(R+"\n\t\t\t\t Computer")  
+        print(W+"\n\n"+"Choose the location of the pocket to play: 'a, b, c, d, e, f': " )
+    elif(x==2):
+        print(P+"\t\t\t\t Computer")
+        print(P+"\t\t\t"+str(board[5])+"  "+str(board[4])+"  "+str(board[3])+"   "+str(board[2])+"   "+str(board[1])+"   "+str(board[0]))
+        print(P+"\n\t"+str(board[6])+R+"\t\t\t\t\t\t\t\t"+str(board[13]))
+        print(R+"\n\t\t\t"+str(board[7])+"  "+str(board[8])+"  "+str(board[9])+"  "+str(board[10])+"  "+str(board[11])+"  "+str(board[12]))
+        print(G+"\t\t\t"+'a'+"  "+'b'+"  "+'c'+"   "+'d'+"   "+'e'+"   "+'f')
+        print(R+"\t\t\t\t Player")  
+        print(W+"\n\n"+"Choose the location of the pocket to play: 'a, b, c, d, e, f': " )
     return
 
 def getInput(board, player):
