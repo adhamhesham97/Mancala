@@ -264,6 +264,7 @@ def play():
             break
 
 def display(board,x):
+    W  = '\033[0m'
     R  = '\033[31m' # red
     G  = '\033[32m' # green
     P  = '\033[35m' # purple
@@ -287,6 +288,7 @@ def display(board,x):
         print(R+"\n\t\t\t"+str(board[7])+"  "+str(board[8])+"  "+str(board[9])+"  "+str(board[10])+"  "+str(board[11])+"  "+str(board[12]))
         print(G+"\t\t\t"+'a'+"  "+'b'+"  "+'c'+"   "+'d'+"   "+'e'+"   "+'f')
         print(R+"\t\t\t\t Player")
+    print(W)
     return
 def getInput(board,player):     # TODO: checks for invalid input and returns a pocket to play from
     W  = '\033[0m'
@@ -324,7 +326,7 @@ def getInput(board,player):     # TODO: checks for invalid input and returns a p
     else:
         return index        #pocket
     return
-play()
+# play()
 
 board = initialBoard
 display(board,0)
@@ -340,12 +342,15 @@ while(True):
     if(player == userPlayer):
         pocket = getInput(board, player)
         board, player = move(board, pocket)
+        #display(board, userPlayer)
+        if(player != userPlayer):
+            display(board, userPlayer)
     else:
         pocket = bestPocket(board, player)
         board, player = move(board, pocket)
         print('computer played pocket', pocket+1)
         if(player != userPlayer):
-            display(board, 0)
+            display(board, userPlayer)
         
     winner, board = findWinner(board)
     if(winner != 0): #display final board
