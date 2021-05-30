@@ -1,6 +1,6 @@
 initialBoard = [4,4,4,4,4,4, 0,    4,4,4,4,4,4, 0]
 pocketNames = ['f','e','d','c','b','a', 0,    'a','b','c','d','e','f', 0]      
-depth=10
+import time
 
 def move(board, pocket, stealing=True):
     
@@ -48,7 +48,6 @@ def move(board, pocket, stealing=True):
             board[12 - currentPocket]=0
     
     #  if a player ended at his mancala he plays again
-    
     if (player == 1 and currentPocket == 6):
         nextPlayer = 1
     
@@ -107,8 +106,16 @@ def isValidMove(board, pocket):
      
 def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
 	
-    #check if there are no moves possible
+    #check if time limit is reached
+    # print(start_limit_list)
+    if (start_limit_list[1] != -1 and (time.time() - start_limit_list[0]) > start_limit_list[1]):
+        return score(board, player), -1
     
+    # #check if a key is pressed
+    # if(flag_list):
+    #     return score(board, player), -1
+    
+    #check if there are no moves possible
     winningPlayer, board = findWinner(board)
     
     if (winningPlayer != 0):
@@ -127,6 +134,7 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
         maxScore = float('-inf')
         for pocket in playerPockets:
             if(isValidMove(board, pocket)):
+                # print(board, pocket)
                 childBoard, nextPlayer = move(board, pocket, stealing)
                 
                 if(nextPlayer == player): # if player gets another move then next turn is maximizer player's trun
@@ -151,6 +159,7 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
         minScore = float('inf')
         for pocket in playerPockets:
             if(isValidMove(board, pocket)):
+                # print(board, pocket)
                 childBoard, nextPlayer = move(board, pocket)
                 
                 if(nextPlayer == player): # if player gets anothrt move then next node is minimizer also
@@ -169,9 +178,24 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
                 if (beta <= alpha):
                     break
         return minScore, nextMove
+
+start_limit_list = [0,-1]
+
+def bestPocket(board, player, stealing=True, depth=10):
+    print("loading...\nPress Ctrl-C to terminate (time limit is", start_limit_list[1], "seconds)",end='\r')
+    start_limit_list[0] = time.time()
+    maxScore = float('-inf')
+    try:
+        for depth in range(15):
+            Score, Move = minimax(board, player, stealing, depth, float('-inf'), float('inf'), True)
+            if (Score > maxScore):
+                nextMove = Move
+                maxScore = Score
+                # print(nextMove)
+            
+    except KeyboardInterrupt:
+        print("\nCtrl-C is pressed",end='\r')
         
-def bestPocket(board, player, stealing=True):
-    maxScore, nextMove = minimax(board, player, stealing, depth, float('-inf'), float('inf'), True)
     return nextMove#, maxScore
 
 '''
@@ -201,8 +225,19 @@ board, nextPlayer = move(board, pocket=7)
 print(board)
 board=[0, 0, 0, 3, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1]
 print(bestPocket(board, 1))
+
+
+## Time analysis
+
+import time
+for depth in range(14):
+    board = initialBoard
+    start_time = time.time()
+    print('at depth',depth,'the best pocket is', bestPocket(board, 1, True, depth))
+    print( "it took", (time.time() - start_time), "seconds\n\n")
+
 '''
-    
+
 def score(board, player): 
     if(player==1):
         return board[6]-board[13]
@@ -244,26 +279,6 @@ def findWinner(board):
     
     
     return result, board
-
-def play(stealing):
-    board = initialBoard
-    display(board,0)
-    player=1
-    while(True):
-        pocket = bestPocket(board, player, stealing)
-        print('\nplayer',player,'plays pocket', pocketNames[pocket])
-        board, player = move(board, pocket, stealing)
-        winner, board = findWinner(board)
-        display(board, 0)
-        if(winner==1):
-            print('player 1 wins')
-            break
-        elif(winner==2):
-            print('player 2 wins')
-            break
-        elif(winner==3):
-            print('a tie')
-            break
 
 def display(board,x):
     W  = '\033[0m'
@@ -364,27 +379,45 @@ def inputPlaying():
     return Playing
     
 def inputPlayerNumber():
-    userPlayer=None
-    while (userPlayer==None):
-        x = input('player 1 or player 2? ')
-        if(x == '1'):
-            userPlayer = 1
-        elif(x == '2'):
-            userPlayer = 2
+    while (True):
+        x = input('do you want to play first y/n? ')
+        if(x == 'y'):
+            return 1, 2
+        elif(x == 'n'):
+            return 2, 1
         else:
             print("invalid input")
-    if(userPlayer == 1):
-        computerPlayer = 2
-    else:
-         computerPlayer = 1
-    return userPlayer, computerPlayer
+    return
 
-playing = inputPlaying()
+def inputimeLimit():
+    flag=False
+    while (flag==False):
+        x = input('do you want to change time limit (20 seconds per move) y/n? ')
+        if(x == 'n'):
+            return 20
+        elif(x == 'y'):
+            flag = True
+        else:
+            print("invalid input")
 
-if(playing):
+    timeLimit=None
+    while (timeLimit==None):
+        x = input('enter time limit: ')
+        try:
+            x = int(x)
+            if(x > 0):
+                timeLimit = x
+            else:
+                print("invalid input")
+        except:
+            print("invalid input")
+            
+    
+    return timeLimit
+
+def playerVScomputer():
     stealing = inputStealing()
     board = initialBoard
-    display(board,0)
     userPlayer, computerPlayer = inputPlayerNumber()
     player = 1
     
@@ -414,7 +447,35 @@ if(playing):
         elif(winner == 3):
             print('a tie')
             break
+    return
+
+def computerVScomputer():
+    stealing = inputStealing()
+    board = initialBoard
+    display(board,0)
+    player=1
+    while(True):
+        pocket = bestPocket(board, player, stealing)
+        print('\nplayer',player,'plays pocket', pocketNames[pocket])
+        board, player = move(board, pocket, stealing)
+        winner, board = findWinner(board)
+        display(board, 0)
+        if(winner==1):
+            print('player 1 wins')
+            break
+        elif(winner==2):
+            print('player 2 wins')
+            break
+        elif(winner==3):
+            print('a tie')
+            break
+
+playing = inputPlaying()
+timeLimit = inputimeLimit()
+start_limit_list[1] = timeLimit
+if(playing):
+    playerVScomputer()
 
 else:
-    stealing = inputStealing()
-    play(stealing)
+    computerVScomputer()
+
