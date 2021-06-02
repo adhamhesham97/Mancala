@@ -1,6 +1,21 @@
 initialBoard = [4,4,4,4,4,4, 0,    4,4,4,4,4,4, 0]
 pocketNames = ['f','e','d','c','b','a', 0,    'a','b','c','d','e','f', 0]      
 import time
+import  pickle
+import os
+#os.system("cls")
+
+def Save(board,player,stealing,path):
+    with open(path,'wb')as f:
+        pickle.dump([board,player,stealing],f)
+    return
+    
+
+def Load(path):
+    with open(path,'rb')as f:
+        board,player,stealing=pickle.load(f)
+    return board,player,stealing
+
 
 def move(board, pocket, stealing=True):
     
