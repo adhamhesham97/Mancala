@@ -1,17 +1,21 @@
 initialBoard = [4,4,4,4,4,4, 0,    4,4,4,4,4,4, 0]
-pocketNames = ['f','e','d','c','b','a', 0,    'a','b','c','d','e','f', 0]      
+pocketNames = ['f','e','d','c','b','a', 0,    'a','b','c','d','e','f', 0] 
+x  = -1
+load_flag=x
 import time
 import  pickle
 import os
 #os.system("cls")
 
-def Save(board,player,stealing,path):
+def Save(board,player,stealing):
+    path='Saved.txt'
     with open(path,'wb')as f:
         pickle.dump([board,player,stealing],f)
     return
     
 
-def Load(path):
+def Load():
+    path='Saved.txt'
     with open(path,'rb')as f:
         board,player,stealing=pickle.load(f)
     return board,player,stealing
@@ -334,13 +338,17 @@ def display(board,x):
         print(R+"\t\t\t\t"+"    Player".expandtabs(30)+W)
     return
 
-def getInput(board,player):
+def getInput(board,player,stealing):
     display(board,player)
-    user_ip=input("Choose the location of the pocket to play: ")#'a, b, c, d, e, f': " )
+    user_ip=input("Choose the location of the pocket to play or s for saving the game: ")#'a, b, c, d, e, f': " )
     index=9999
     while(1):   
         if(player==1):
-            if(user_ip=='a'):
+            if(user_ip=='s'):
+                Save(board, player, stealing)
+                
+                return -1
+            elif(user_ip=='a'):
                 index=5
             elif (user_ip=='b'):
                 index=4
@@ -353,7 +361,10 @@ def getInput(board,player):
             elif (user_ip=='f'):
                 index=0
         elif(player==2):
-            if(user_ip=='a'):
+            if(user_ip=='s'):
+                Save(board, player, stealing)
+                return -1
+            elif(user_ip=='a'):
                 index=7
             elif (user_ip=='b'):
                 index=8
@@ -365,7 +376,7 @@ def getInput(board,player):
                 index=11
             elif (user_ip=='f'):
                 index=12
-        if(user_ip!='a' and user_ip!='b' and user_ip!='c' and user_ip!='d' and user_ip!='e' and user_ip!='f' ):
+        if(user_ip!='a' and user_ip!='b' and user_ip!='c' and user_ip!='d' and user_ip!='e' and user_ip!='f' and user_ip!='s'):
             user_ip=input("Enter the right pocket: ")
             continue
         elif(board[index]==0 ):
@@ -378,6 +389,9 @@ def getInput(board,player):
 
 def inputStealing():
     stealing=None
+    if(inputPlaying.load_flag==1):
+        _,_,stealing=Load()
+        return stealing
     while (stealing==None):
         x = input('game mode: stealing y/n? ')
         if(x == 'y'):
@@ -390,10 +404,17 @@ def inputStealing():
 
 def inputPlaying():
     Playing=None
+
     while (Playing==None):
         x = input('do you want to play the computer y/n? ')
         if(x == 'y'):
-            Playing=True
+            y=input('For new game press N and For saved games press S: ')
+            if(y=='N'):
+                Playing=True
+                inputPlaying.load_flag=0
+            elif(y=='S'):
+                inputPlaying.load_flag=1
+                Playing=True
         elif(x == 'n'):
             Playing=False
         else:
@@ -401,12 +422,20 @@ def inputPlaying():
     return Playing
     
 def inputPlayerNumber():
+
     while (True):
+        if(inputPlaying.load_flag==1):
+            _,player,_=Load()
+            if(player==1):
+                return 1,2
+            else:
+                return 2,1
+        
         x = input('do you want to play first y/n? ')
         if(x == 'y'):
-            return 1, 2
+                return 1, 2
         elif(x == 'n'):
-            return 2, 1
+                return 2, 1
         else:
             print("invalid input")
     return
@@ -438,20 +467,31 @@ def inputimeLimit():
     return timeLimit
 
 def playerVScomputer():
+    
     stealing = inputStealing()
     board = initialBoard
     userPlayer, computerPlayer = inputPlayerNumber()
-    player = 1
+    if(inputPlaying.load_flag==1):
+        player=userPlayer
+        inputPlaying.load_flag==0
+    else:
+        player = 1
     
     while(True):
         if(player == userPlayer):
-            pocket = getInput(board, player)
+            pocket = getInput(board, player,stealing)
+            if(pocket==-1):
+                return
             board, player = move(board, pocket, stealing)
             if(player != userPlayer):
                 display(board, userPlayer)
         else:
+            # if(inputPlaying.load_flag==1):
+            #     display(board,userPlayer)
+            #     inputPlaying.load_flag==0
             pocket = bestPocket(board, player, stealing)
             board, player = move(board, pocket, stealing)
+
             print('\ncomputer played pocket', pocketNames[pocket])
             if(player != userPlayer):
                 display(board, userPlayer)
@@ -490,12 +530,13 @@ def computerVScomputer():
             break
         elif(winner==3):
             print('a tie')
-            break
 
 playing = inputPlaying()
 timeLimit = inputimeLimit()
 start_limit_list[1] = timeLimit
 if(playing):
+    if(inputPlaying.load_flag==1):
+        initialBoard,_,_=Load()
     playerVScomputer()
 
 else:
