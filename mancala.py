@@ -1,7 +1,6 @@
 initialBoard = [4,4,4,4,4,4, 0,    4,4,4,4,4,4, 0]
 pocketNames = ['f','e','d','c','b','a', 0,    'a','b','c','d','e','f', 0] 
-x  = -1
-load_flag=x
+
 import time
 import  pickle
 import os
