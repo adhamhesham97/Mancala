@@ -529,7 +529,7 @@ def computerVScomputer():
             break
         elif(winner==3):
             print('a tie')
-
+            break
 playing = inputPlaying()
 timeLimit = inputimeLimit()
 start_limit_list[1] = timeLimit
