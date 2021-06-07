@@ -248,7 +248,7 @@ def minimax(board, player, stealing, depth, alpha, beta, maximizingPlayer):
 start_limit_list = [0,-1]
 
 def bestPocket(board, player, stealing=True, depth=10):
-    # print("loading...\nPress Ctrl-C to terminate (time limit is", start_limit_list[1], "seconds)",end='\r')
+    print("loading...\nPress Ctrl-C to play now (time limit is", start_limit_list[1], "seconds)",end='\r')
     start_limit_list[0] = time.time()
     maxScore = float('-inf')
     try:
@@ -388,32 +388,48 @@ def getInput(board,player,stealing):
 
 def inputStealing():
     stealing=None
-    if(inputPlaying.load_flag==1):
-        _,_,stealing=Load()
+    try:
+        if(inputPlaying.load_flag==1):
+            _,_,stealing=Load()
+            return stealing
+        while (stealing==None):
+            x = input('game mode: stealing y/n? ')
+            if(x == 'y'):
+                stealing=True
+            elif(x == 'n'):
+                stealing=False
+            else:
+                print("invalid input")
         return stealing
-    while (stealing==None):
-        x = input('game mode: stealing y/n? ')
-        if(x == 'y'):
-            stealing=True
-        elif(x == 'n'):
-            stealing=False
-        else:
-            print("invalid input")
-    return stealing
+    except:
+        while (stealing==None):
+            x = input('game mode: stealing y/n? ')
+            if(x == 'y'):
+                stealing=True
+            elif(x == 'n'):
+                stealing=False
+            else:
+                print("invalid input")
+        return stealing
 
 def inputPlaying():
-    Playing=None
-
+    Playing = None
+    saved = None
     while (Playing==None):
         x = input('do you want to play the computer y/n? ')
         if(x == 'y'):
-            y=input('For new game press N and For saved games press S: ')
-            if(y=='N'):
-                Playing=True
-                inputPlaying.load_flag=0
-            elif(y=='S'):
-                inputPlaying.load_flag=1
-                Playing=True
+            while(saved==None):
+                y=input('do you want to load an old game y/n? ')
+                if(y=='n'):
+                    Playing=True
+                    inputPlaying.load_flag=0
+                    saved=False
+                elif(y=='y'):
+                    inputPlaying.load_flag=1
+                    Playing=True
+                    saved=True
+                else:
+                    print("invalid input")
         elif(x == 'n'):
             Playing=False
         else:
@@ -442,9 +458,9 @@ def inputPlayerNumber():
 def inputimeLimit():
     flag=False
     while (flag==False):
-        x = input('do you want to change time limit (20 seconds per move) y/n? ')
+        x = input('do you want to change time limit (10 seconds per move) y/n? ')
         if(x == 'n'):
-            return 20
+            return 10
         elif(x == 'y'):
             flag = True
         else:
